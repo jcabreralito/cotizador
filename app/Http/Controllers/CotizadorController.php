@@ -157,251 +157,43 @@ class CotizadorController extends Controller
                             return $alto;
                         }
                     })
-                    ->addColumn('entran', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('entran', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
-                            //Calcula largo de material a lo ancho y a lo alto de las piezas.
 
-                            if ($tancho > $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho > $row->ANCHO && $talto > $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho < $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = 1;
-                                $entranAlto = 1;
-                            } else {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ALTO / $talto);
-                            }
-
-                            if ($entranAncho == 0) {
-                                $a_lo_ancho = ceil($cantidad) * $talto;
-                            } else {
-                                $a_lo_ancho = ceil($cantidad / (int)($entranAncho)) * $talto;
-                            }
-
-                            if ($entranAlto == 0) {
-                                $a_lo_alto = ceil($cantidad) * $tancho;
-                            } else {
-                                $a_lo_alto = ceil($cantidad / (int)($entranAlto)) * $tancho;
-                            }
-
-                            // dd($a_lo_alto); // a lo ancho 11256 a lo alto 5656
-                            //Obtiene la cantidad menor de material...
-                            if ($a_lo_ancho < $a_lo_alto) {
-                                $entran = floor($entranAncho);
-                            } else if ($a_lo_ancho > $a_lo_alto) {
-                                $entran = floor($entranAlto);
-                            } else if ($a_lo_ancho == $a_lo_alto) {
-                                $entran = floor($entranAlto);
-                            } else {
-                            }
+                            $entran = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'entran');
                             return $entran;
                         }
                     })
-                    ->addColumn('textoEntran', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('textoEntran', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
-                            //Calcula largo de material a lo ancho y a lo alto de las piezas.
-                            if ($tancho > $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho > $row->ANCHO && $talto > $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho < $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = 1;
-                                $entranAlto = 1;
-                            } else {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ALTO / $talto);
-                            }
 
-                            if ($entranAncho == 0) {
-                                $a_lo_ancho = 0;
-                            } else {
-                                $a_lo_ancho = ceil($cantidad / (int)($entranAncho)) * $talto;
-                            }
-
-                            if ($entranAlto == 0) {
-                                $a_lo_alto = 0;
-                            } else {
-                                $a_lo_alto = ceil($cantidad / (int)($entranAlto)) * $tancho;
-                            }
-
-                            // dd($a_lo_alto); //a lo ancho 11256 - a lo alto 5656
-
-                            // $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-                            // $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-                            //Obtiene la cantidad menor de material...
-                            if ($a_lo_ancho > $a_lo_alto) {
-                                $textoEntran = 'A lo ancho';
-                            } else if ($a_lo_ancho < $a_lo_alto) {
-                                $textoEntran = 'A lo alto';
-                            } else if ($a_lo_ancho == $a_lo_alto) {
-                                $textoEntran = 'A lo alto';
-                            } else {
-                            }
+                            $textoEntran = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'textoentran');
                             return $textoEntran;
+
                         }
                     })
-                    ->addColumn('aprovechamiento', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('aprovechamiento', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
-                            //Calcula largo de material a lo ancho y a lo alto de las piezas.
 
-                            if ($tancho > $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho > $row->ANCHO && $talto > $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho < $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ALTO / $talto);
-                            }
-
-                            if ($entranAncho == 0) {
-                                $a_lo_ancho = ceil($cantidad) * $talto;
-                            } else {
-                                $a_lo_ancho = ceil($cantidad / (int)($entranAncho)) * $talto;
-                            }
-
-                            if ($entranAlto == 0) {
-                                $a_lo_alto = ceil($cantidad) * $tancho;
-                            } else {
-                                $a_lo_alto = ceil($cantidad / (int)($entranAlto)) * $tancho;
-                            }
-
-                            // $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-                            // $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-                            //Obtiene la cantidad menor de material...
-
-                            if ($tancho > $row->ANCHO) {
-                                $aprovechamiento = 0;
-                            } else if ($a_lo_ancho > $a_lo_alto) {
-                                $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_ancho)) * 100;
-                                $aprovechamiento = $aprovech;
-                            } else if ($a_lo_ancho < $a_lo_alto) {
-                                $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_alto)) * 100;
-                                $aprovechamiento = $aprovech;
-                            } else if ($a_lo_ancho == $a_lo_alto) {
-                                $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_ancho)) * 100;
-                                $aprovechamiento = $aprovech;
-                            } else {
-                                $aprovechamiento = 0;
-                            }
+                            $aprovechamiento = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'aprovechamiento');
                             return $aprovechamiento;
+
                         }
                     })
-                    ->addColumn('rescantidad', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('rescantidad', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
-                            //Calcula largo de material a lo ancho y a lo alto de las piezas.
 
-                            if ($tancho > $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho > $row->ANCHO && $talto > $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho < $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ALTO / $talto);
-                            }
-
-                            if ($entranAncho == 0) {
-                                $a_lo_ancho = ceil($cantidad) * $talto;
-                            } else {
-                                $a_lo_ancho = ceil($cantidad / (int)($entranAncho)) * $talto;
-                            }
-
-                            if ($entranAlto == 0) {
-                                $a_lo_alto = ceil($cantidad) * $tancho;
-                            } else {
-                                $a_lo_alto = ceil($cantidad / (int)($entranAlto)) * $tancho;
-                            }
-
-                            // $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-                            // $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-                            //Obtiene la cantidad menor de material...
-                            if ($a_lo_ancho > $a_lo_alto) {
-                                $anchoMat = $row->ANCHO / 100;
-                                $aloancho = $a_lo_ancho / 100;
-                                $cantidad2 = $anchoMat * $aloancho;
-                                $cantidad2 = $cantidad2 / $anchoMat;
-                                $cantidad2 = $cantidad2;
-                            } else {
-                                $anchoMat = $row->ANCHO / 100;
-                                $aloalto = $a_lo_alto / 100;
-                                $cantidad2 = $anchoMat * $aloalto;
-                                $cantidad2 = $cantidad2 / $anchoMat;
-                                $cantidad2 = $cantidad2;
-                            }
-
-                            $rescantidad = $cantidad2;
+                            $rescantidad = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'rescantidad');
                             return $rescantidad;
+
                         }
                     })
-                    ->addColumn('resimporte', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('resimporte', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
-                            //Calcula largo de material a lo ancho y a lo alto de las piezas.
-                            if ($tancho > $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho > $row->ANCHO && $talto > $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else if ($tancho < $row->ANCHO && $talto < $row->ALTO) {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ANCHO / $talto);
-                            } else {
-                                $entranAncho = (int)($row->ANCHO / $tancho);
-                                $entranAlto = (int)($row->ALTO / $talto);
-                            }
 
-                            if ($entranAncho == 0) {
-                                $a_lo_ancho = ceil($cantidad) * $talto;
-                            } else {
-                                $a_lo_ancho = ceil($cantidad / (int)($entranAncho)) * $talto;
-                            }
-
-                            if ($entranAlto == 0) {
-                                $a_lo_alto = ceil($cantidad) * $tancho;
-                            } else {
-                                $a_lo_alto = ceil($cantidad / (int)($entranAlto)) * $tancho;
-                            }
-
-                            // $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-                            // $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-                            //Obtiene la cantidad menor de material...
-                            if ($a_lo_ancho > $a_lo_alto) {
-                                $anchoMat = $row->ANCHO / 100;
-                                $aloancho = $a_lo_ancho / 100;
-                                $cantidad2 = $anchoMat * $aloancho;
-                                $cantidad2 = $cantidad2 / $anchoMat;
-                                $cantidad2 = $cantidad2;
-                            } else {
-                                $anchoMat = $row->ANCHO / 100;
-                                $aloalto = $a_lo_alto / 100;
-                                $cantidad2 = $anchoMat * $aloalto;
-                                $cantidad2 = $cantidad2 / $anchoMat;
-                                $cantidad2 = $cantidad2;
-                            }
-
-                            $valor = $row->IMPORTE * $cantidad2;
-                            $valor = ($valor * $row->ANCHO / 100) * 1.1;
-                            $resimporte = $valor;
-
+                            $resimporte = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'resimporte');
                             return $resimporte;
+
                         }
                     })
                     ->addColumn('titCantMat', function ($row) use ($tancho, $talto, $cantidad) {
@@ -431,148 +223,43 @@ class CotizadorController extends Controller
                             return $alto;
                         }
                     })
-                    ->addColumn('entran', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('entran', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
                             //Calcular a lo ancho/ancho...
-                            $resAncho = ($row->ANCHO / $tancho);
-                            $resAlto = ($row->ALTO / $talto);
 
-                            //Calcular a lo alto/alto...
-                            $resAncho2 = ($row->ANCHO / $talto);
-                            $resAlto2 = ($row->ALTO / $tancho);
-
-                            //Calcular cuantas piezas entran a lo ancho y a lo alto...
-                            $orientacionAncho = (int)$resAncho * (int)$resAlto;
-                            $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-                            if ($orientacionAncho > $orientacionAlto) {
-                                $entran = $orientacionAncho;
-                            } else if ($orientacionAncho < $orientacionAlto) {
-                                $entran = $orientacionAlto;
-                            } else if ($orientacionAncho == $orientacionAlto) {
-                                $entran = $orientacionAlto;
-                            }
-                            //Obtener el porcentaje de Aprovechamiento...
+                            $entran = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'entran');
                             return $entran;
                         }
                     })
-                    ->addColumn('textoEntran', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('textoEntran', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
                             //Calcular a lo ancho/ancho...
-                            $resAncho = ($row->ANCHO / $tancho);
-                            $resAlto = ($row->ALTO / $talto);
 
-                            //Calcular a lo alto/alto...
-                            $resAncho2 = ($row->ANCHO / $talto);
-                            $resAlto2 = ($row->ALTO / $tancho);
-
-                            //Calcular cuantas piezas entran a lo ancho y a lo alto...
-                            $orientacionAncho = (int)$resAncho * (int)$resAlto;
-                            $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-                            if ($orientacionAncho > $orientacionAlto) {
-                                $textoEntran = "A lo ancho";
-                            } else if ($orientacionAncho < $orientacionAlto) {
-                                $textoEntran = "A lo alto";
-                            } else if ($orientacionAncho == $orientacionAlto) {
-                                $textoEntran = "A lo alto";
-                            }
-                            //Obtener el porcentaje de Aprovechamiento...
+                            $textoEntran = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'textoentran');
                             return $textoEntran;
                         }
                     })
-                    ->addColumn('aprovechamiento', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('aprovechamiento', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
                             //Calcular a lo ancho/ancho...
-                            $resAncho = ($row->ANCHO / $tancho);
-                            $resAlto = ($row->ALTO / $talto);
 
-                            //Calcular a lo alto/alto...
-                            $resAncho2 = ($row->ANCHO / $talto);
-                            $resAlto2 = ($row->ALTO / $tancho);
-
-                            //Calcular cuantas piezas entran a lo ancho y a lo alto...
-                            $orientacionAncho = (int)$resAncho * (int)$resAlto;
-                            $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-                            if ($orientacionAncho > $orientacionAlto) {
-                                $entran = $orientacionAncho;
-                            } else if ($orientacionAncho < $orientacionAlto) {
-                                $entran = $orientacionAlto;
-                            } else if ($orientacionAncho == $orientacionAlto) {
-                                $entran = $orientacionAlto;
-                            }
-                            //Obtener el porcentaje de Aprovechamiento...
-                            $aprovech = (($tancho * $talto * $entran) / ($row->ANCHO * $row->ALTO)) * 100;
-                            $aprovechamiento = $aprovech;
+                            $aprovechamiento = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'aprovechamiento');
                             return $aprovechamiento;
                         }
                     })
-                    ->addColumn('rescantidad', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('rescantidad', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
                             //Calcular a lo ancho/ancho...
-                            $resAncho = ($row->ANCHO / $tancho);
-                            $resAlto = ($row->ALTO / $talto);
 
-                            //Calcular a lo alto/alto...
-                            $resAncho2 = ($row->ANCHO / $talto);
-                            $resAlto2 = ($row->ALTO / $tancho);
-
-                            //Calcular cuantas piezas entran a lo ancho y a lo alto...
-                            $orientacionAncho = (int)$resAncho * (int)$resAlto;
-                            $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-                            if ($orientacionAncho > $orientacionAlto) {
-                                $entran = $orientacionAncho;
-                            } else if ($orientacionAncho < $orientacionAlto) {
-                                $entran = $orientacionAlto;
-                            } else if ($orientacionAncho == $orientacionAlto) {
-                                $entran = $orientacionAlto;
-                            }
-
-
-
-                            //Obtener Cantidad res...
-                            //========================================revisar aqui===================================
-                            $cantidad2 = ($cantidad / $entran);
-                            $rescantidad = $cantidad2;
-
+                            $rescantidad = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'rescantidad');
                             return ceil($rescantidad);
                         }
                     })
-                    ->addColumn('resimporte', function ($row) use ($tancho, $talto, $cantidad) {
+                    ->addColumn('resimporte', function ($row) use ($tancho, $talto, $cantidad, $tipo_material) {
                         if ($row->ANCHO != 0 && $row->ALTO != 0) {
                             //Calcular a lo ancho/ancho...
-                            $resAncho = ($row->ANCHO / $tancho);
-                            $resAlto = ($row->ALTO / $talto);
 
-                            //Calcular a lo alto/alto...
-                            $resAncho2 = ($row->ANCHO / $talto);
-                            $resAlto2 = ($row->ALTO / $tancho);
-
-                            //Calcular cuantas piezas entran a lo ancho y a lo alto...
-                            $orientacionAncho = (int)$resAncho * (int)$resAlto;
-                            $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-                            if ($orientacionAncho > $orientacionAlto) {
-                                $entran = $orientacionAncho;
-                            } else if ($orientacionAncho < $orientacionAlto) {
-                                $entran = $orientacionAlto;
-                            } else if ($orientacionAncho == $orientacionAlto) {
-                                $entran = $orientacionAlto;
-                            }
-                            //Obtener Cantidad res...
-
-
-                            $cantidad2 = ($cantidad / $entran);
-                            $rescantidad = $cantidad2;
-
-                            $anchom = $row->ANCHO / 100;
-                            $altom = $row->ALTO / 100;
-
-                            $valor = $anchom * $altom * $rescantidad * $row->IMPORTE * 1.1;
-                            $resimporte = $valor;
-
+                            $resimporte = $this->calcularMaterial($cantidad, $tancho, $talto, $row->ANCHO, $row->ALTO, $tipo_material, $row->IMPORTE, 'resimporte');
                             return $resimporte;
                         }
                     })
@@ -585,358 +272,6 @@ class CotizadorController extends Controller
                     ->make(true);
             }
 
-            // if ($ancho_mat < $tancho || $alto_mat < $talto) {
-            //     return DataTables::of($materiales)
-            //         ->addColumn('med', function ($row) {
-            //             return 'Las Medidas No son Correctas, Favor de Verificarlas.';
-            //         })
-            //         ->addColumn('ancho', function ($row) {
-            //             return null;
-            //         })
-            //         ->addColumn('alto', function ($row) {
-            //             return null;
-            //         })
-            //         ->addColumn('entran', function ($row) use ($tancho, $talto, $cantidad) {
-            //             return null;
-            //         })
-            //         ->addColumn('textoEntran', function ($row) use ($tancho, $talto, $cantidad) {
-            //             return null;
-            //         })
-            //         ->addColumn('aprovechamiento', function ($row) use ($tancho, $talto, $cantidad) {
-            //             return null;
-            //         })
-            //         ->addColumn('rescantidad', function ($row) use ($tancho, $talto, $cantidad) {
-            //             return null;
-            //         })
-            //         ->addColumn('resimporte', function ($row) use ($tancho, $talto, $cantidad) {
-            //             return null;
-            //         })
-            //         ->addColumn('titCantMat', function ($row) use ($tancho, $talto, $cantidad) {
-            //             return null;
-            //         })
-            //         ->make(true);
-            // } else {
-            //     return DataTables::of($materiales)
-            //         ->addColumn('med', function ($row) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 $med = $row->MEDIDA;
-            //                 return $med;
-            //             }
-            //         })
-            //         ->addColumn('ancho', function ($row) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 $ancho = $row->ANCHO;
-            //                 return $ancho;
-            //             }
-            //         })
-            //         ->addColumn('alto', function ($row) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 $alto = $row->ALTO;
-            //                 return $alto;
-            //             }
-            //         })
-            //         ->addColumn('entran', function ($row) use ($tancho, $talto, $cantidad) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 if ($row->TIPO === "R") {
-            //                     //Calcular a lo ancho/ancho...
-            //                     $resAncho = ($row->ANCHO / $tancho);
-            //                     $resAlto = ($row->ALTO / $talto);
-
-            //                     //Calcular a lo alto/alto...
-            //                     $resAncho2 = ($row->ANCHO / $talto);
-            //                     $resAlto2 = ($row->ALTO / $tancho);
-
-            //                     //Calcular cuantas piezas entran a lo ancho y a lo alto...
-            //                     $orientacionAncho = (int)$resAncho * (int)$resAlto;
-            //                     $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-            //                     if ($orientacionAncho > $orientacionAlto) {
-            //                         $entran = $orientacionAncho;
-            //                         // $textoEntran = "A lo ancho";
-            //                     } else if ($orientacionAncho < $orientacionAlto) {
-            //                         $entran = $orientacionAlto;
-            //                         // $textoEntran = "A lo alto";
-            //                     } else if ($orientacionAncho == $orientacionAlto) {
-            //                         $entran = $orientacionAlto;
-            //                         // $textoEntran = "A lo alto";
-            //                     }
-            //                     //Obtener el porcentaje de Aprovechamiento...
-            //                     // $aprovech = (($tancho * $talto * $entran) / ($row->ANCHO1 * $row->ALTO1)) * 100;
-            //                     // $porcentaje = $aprovech;
-            //                     return $entran;
-            //                 } else if ($row->TIPO === "F" || $row->TIPO === "P") {
-            //                     //Calcula largo de material a lo ancho y a lo alto de las piezas.
-            //                     $entranAncho = $row->ANCHO / $tancho;
-            //                     $entranAlto = $row->ANCHO / $talto;
-
-            //                     $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-            //                     $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-            //                     // dd($a_lo_ancho);
-
-            //                     //Obtiene la cantidad menor de material...
-            //                     if ($a_lo_ancho < $a_lo_alto) {
-            //                         // $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_ancho)) * 100;
-            //                         // $porcentaje = $aprovech;
-            //                         $entran = floor($entranAncho);
-            //                         // $textoEntran = 'A lo ancho';
-            //                     } else if ($a_lo_ancho > $a_lo_alto) {
-            //                         // $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_alto)) * 100;
-            //                         // $porcentaje = $aprovech;
-            //                         $entran = floor($entranAlto);
-            //                         // $textoEntran = 'A lo alto';
-            //                     } else if ($a_lo_ancho == $a_lo_alto) {
-            //                         // $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_alto)) * 100;
-            //                         // $porcentaje = $aprovech;
-            //                         $entran = floor($entranAlto);
-            //                         // $textoEntran = 'A lo alto';
-            //                     } else {
-            //                         //no hay otra condicion...
-            //                     }
-            //                     return $entran;
-            //                 }
-
-            //                 // $entran = $row->ALTO;
-            //             }
-            //         })
-            //         ->addColumn('textoEntran', function ($row) use ($tancho, $talto, $cantidad) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 if ($row->TIPO === "R") {
-            //                     //Calcular a lo ancho/ancho...
-            //                     $resAncho = ($row->ANCHO / $tancho);
-            //                     $resAlto = ($row->ALTO / $talto);
-
-            //                     //Calcular a lo alto/alto...
-            //                     $resAncho2 = ($row->ANCHO / $talto);
-            //                     $resAlto2 = ($row->ALTO / $tancho);
-
-            //                     //Calcular cuantas piezas entran a lo ancho y a lo alto...
-            //                     $orientacionAncho = (int)$resAncho * (int)$resAlto;
-            //                     $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-            //                     if ($orientacionAncho > $orientacionAlto) {
-            //                         // $entran = $orientacionAncho;
-            //                         $textoEntran = "A lo ancho";
-            //                     } else if ($orientacionAncho < $orientacionAlto) {
-            //                         // $entran = $orientacionAlto;
-            //                         $textoEntran = "A lo alto";
-            //                     } else if ($orientacionAncho == $orientacionAlto) {
-            //                         // $entran = $orientacionAlto;
-            //                         $textoEntran = "A lo alto";
-            //                     }
-            //                     //Obtener el porcentaje de Aprovechamiento...
-            //                     // $aprovech = (($tancho * $talto * $entran) / ($row->ANCHO1 * $row->ALTO1)) * 100;
-            //                     // $porcentaje = $aprovech;
-            //                     return $textoEntran;
-            //                 } else if ($row->TIPO === "F" || $row->TIPO === "P") {
-
-            //                     //Calcula largo de material a lo ancho y a lo alto de las piezas.
-            //                     // $entranAncho = $row->ANCHO / $tancho;
-            //                     // $entranAlto = $row->ANCHO / $talto;
-
-            //                     $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-            //                     $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-            //                     //Obtiene la cantidad menor de material...
-            //                     if ($a_lo_ancho < $a_lo_alto) {
-            //                         // $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_ancho)) * 100;
-            //                         // $porcentaje = $aprovech;
-            //                         // $entran = floor($entranAncho);
-            //                         $textoEntran = 'A lo ancho';
-            //                     } else if ($a_lo_ancho > $a_lo_alto) {
-            //                         // $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_alto)) * 100;
-            //                         // $porcentaje = $aprovech;
-            //                         // $entran = floor($entranAlto);
-            //                         $textoEntran = 'A lo alto';
-            //                     } else if ($a_lo_ancho == $a_lo_alto) {
-            //                         // $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_alto)) * 100;
-            //                         // $porcentaje = $aprovech;
-            //                         // $entran = floor($entranAlto);
-            //                         $textoEntran = 'A lo alto';
-            //                     } else {
-            //                         //no hay otra condicion...
-            //                     }
-            //                     return $textoEntran;
-            //                 }
-            //             }
-            //         })
-            //         ->addColumn('aprovechamiento', function ($row) use ($tancho, $talto, $cantidad) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 if ($row->TIPO === "R") {
-            //                     //Calcular a lo ancho/ancho...
-            //                     $resAncho = ($row->ANCHO / $tancho);
-            //                     $resAlto = ($row->ALTO / $talto);
-
-            //                     //Calcular a lo alto/alto...
-            //                     $resAncho2 = ($row->ANCHO / $talto);
-            //                     $resAlto2 = ($row->ALTO / $tancho);
-
-            //                     //Calcular cuantas piezas entran a lo ancho y a lo alto...
-            //                     $orientacionAncho = (int)$resAncho * (int)$resAlto;
-            //                     $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-            //                     if ($orientacionAncho > $orientacionAlto) {
-            //                         $entran = $orientacionAncho;
-            //                     } else if ($orientacionAncho < $orientacionAlto) {
-            //                         $entran = $orientacionAlto;
-            //                     } else if ($orientacionAncho == $orientacionAlto) {
-            //                         $entran = $orientacionAlto;
-            //                     }
-            //                     //Obtener el porcentaje de Aprovechamiento...
-            //                     $aprovech = (($tancho * $talto * $entran) / ($row->ANCHO * $row->ALTO)) * 100;
-            //                     $aprovechamiento = $aprovech;
-            //                     return $aprovechamiento;
-            //                 } else if ($row->TIPO === "F" || $row->TIPO === "P") {
-            //                     //Calcula largo de material a lo ancho y a lo alto de las piezas.
-
-            //                     $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-            //                     $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-            //                     //Obtiene la cantidad menor de material...
-            //                     if ($a_lo_ancho < $a_lo_alto) {
-            //                         $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_ancho)) * 100;
-            //                         $aprovechamiento = $aprovech;
-            //                     } else if ($a_lo_ancho > $a_lo_alto) {
-            //                         $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_alto)) * 100;
-            //                         $aprovechamiento = $aprovech;
-            //                     } else if ($a_lo_ancho == $a_lo_alto) {
-            //                         $aprovech = (($talto * $tancho * $cantidad) / ($row->ANCHO * $a_lo_alto)) * 100;
-            //                         $aprovechamiento = $aprovech;
-            //                     } else {
-            //                         //no hay otra condicion...
-            //                     }
-            //                     return $aprovechamiento;
-            //                 }
-            //             }
-            //         })
-            //         ->addColumn('rescantidad', function ($row) use ($tancho, $talto, $cantidad) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 if ($row->TIPO === "R") {
-            //                     //Calcular a lo ancho/ancho...
-            //                     $resAncho = ($row->ANCHO / $tancho);
-            //                     $resAlto = ($row->ALTO / $talto);
-
-            //                     //Calcular a lo alto/alto...
-            //                     $resAncho2 = ($row->ANCHO / $talto);
-            //                     $resAlto2 = ($row->ALTO / $tancho);
-
-            //                     //Calcular cuantas piezas entran a lo ancho y a lo alto...
-            //                     $orientacionAncho = (int)$resAncho * (int)$resAlto;
-            //                     $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-            //                     if ($orientacionAncho > $orientacionAlto) {
-            //                         $entran = $orientacionAncho;
-            //                     } else if ($orientacionAncho < $orientacionAlto) {
-            //                         $entran = $orientacionAlto;
-            //                     } else if ($orientacionAncho == $orientacionAlto) {
-            //                         $entran = $orientacionAlto;
-            //                     }
-            //                     //Obtener Cantidad res...
-            //                     $cantidad2 = ($cantidad / $entran);
-            //                     $rescantidad = $cantidad2;
-
-            //                     return $rescantidad;
-            //                 } else if ($row->TIPO === "F" || $row->TIPO === "P") {
-            //                     //Calcula largo de material a lo ancho y a lo alto de las piezas.
-            //                     $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-            //                     $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-            //                     //Obtiene la cantidad menor de material...
-            //                     if ($a_lo_ancho < $a_lo_alto) {
-            //                         $anchoMat = $row->ANCHO / 100;
-            //                         $aloancho = $a_lo_ancho / 100;
-            //                         $cantidad2 = $anchoMat * $aloancho;
-            //                         $cantidad2 = $cantidad2 / $anchoMat;
-            //                         $cantidad2 = $cantidad2;
-            //                     } else {
-            //                         $anchoMat = $row->ANCHO / 100;
-            //                         $aloalto = $a_lo_alto / 100;
-            //                         $cantidad2 = $anchoMat * $aloalto;
-            //                         $cantidad2 = $cantidad2 / $anchoMat;
-            //                         $cantidad2 = $cantidad2;
-            //                     }
-
-            //                     $rescantidad = $cantidad2;
-            //                     return $rescantidad;
-            //                 }
-            //             }
-            //         })
-            //         ->addColumn('resimporte', function ($row) use ($tancho, $talto, $cantidad) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 if ($row->TIPO === "R") {
-            //                     //Calcular a lo ancho/ancho...
-            //                     $resAncho = ($row->ANCHO / $tancho);
-            //                     $resAlto = ($row->ALTO / $talto);
-
-            //                     //Calcular a lo alto/alto...
-            //                     $resAncho2 = ($row->ANCHO / $talto);
-            //                     $resAlto2 = ($row->ALTO / $tancho);
-
-            //                     //Calcular cuantas piezas entran a lo ancho y a lo alto...
-            //                     $orientacionAncho = (int)$resAncho * (int)$resAlto;
-            //                     $orientacionAlto = (int)$resAncho2 * (int)$resAlto2;
-
-            //                     if ($orientacionAncho > $orientacionAlto) {
-            //                         $entran = $orientacionAncho;
-            //                     } else if ($orientacionAncho < $orientacionAlto) {
-            //                         $entran = $orientacionAlto;
-            //                     } else if ($orientacionAncho == $orientacionAlto) {
-            //                         $entran = $orientacionAlto;
-            //                     }
-            //                     //Obtener Cantidad res...
-
-
-            //                     $cantidad2 = ($cantidad / $entran);
-            //                     $rescantidad = $cantidad2;
-
-            //                     $anchom = $row->ANCHO / 100;
-            //                     $altom = $row->ALTO / 100;
-
-            //                     $valor = $anchom * $altom * $rescantidad * $row->IMPORTE * 1.1;
-            //                     $resimporte = $valor;
-
-            //                     return $resimporte;
-            //                 } else if ($row->TIPO === "F" || $row->TIPO === "P") {
-            //                     //Calcula largo de material a lo ancho y a lo alto de las piezas.
-            //                     $a_lo_ancho = ceil($cantidad / (int)($row->ANCHO / $tancho)) * $talto;
-            //                     $a_lo_alto = ceil($cantidad / (int)($row->ANCHO / $talto)) * $tancho;
-
-            //                     //Obtiene la cantidad menor de material...
-            //                     if ($a_lo_ancho < $a_lo_alto) {
-            //                         $anchoMat = $row->ANCHO / 100;
-            //                         $aloancho = $a_lo_ancho / 100;
-            //                         $cantidad2 = $anchoMat * $aloancho;
-            //                         $cantidad2 = $cantidad2 / $anchoMat;
-            //                         $cantidad2 = $cantidad2;
-            //                     } else {
-            //                         $anchoMat = $row->ANCHO / 100;
-            //                         $aloalto = $a_lo_alto / 100;
-            //                         $cantidad2 = $anchoMat * $aloalto;
-            //                         $cantidad2 = $cantidad2 / $anchoMat;
-            //                         $cantidad2 = $cantidad2;
-            //                     }
-
-            //                     $valor = $row->IMPORTE * $cantidad2;
-            //                     $valor = ($valor * $row->ANCHO / 100) * 1.1;
-            //                     $resimporte = $valor;
-
-            //                     return $resimporte;
-            //                 }
-            //             }
-            //         })
-            //         ->addColumn('titCantMat', function ($row) use ($tancho, $talto, $cantidad) {
-            //             if ($row->ANCHO != 0 && $row->ALTO != 0) {
-            //                 if ($row->TIPO === "R") {
-            //                     $titCantMat = 'Pzas.';
-            //                     return $titCantMat;
-            //                 } else if ($row->TIPO === "F" || $row->TIPO === "P") {
-            //                     $titCantMat = 'm.';
-            //                     return $titCantMat;
-            //                 }
-            //             }
-            //         })
-            //         ->make(true);
-            // }
         } else {
             return DataTables::of($materiales)
                 ->addColumn('med', function () {
@@ -1393,6 +728,12 @@ class CotizadorController extends Controller
 
     public function eliminarMaterialCotizador(Request $request)
     {
+        $primer_material = DB::table('v_primer_material')->where('ID_COTIZACIONES', $request->id_cotizaciones)->get();
+
+        if ($primer_material[0]->ID_COTIZACIONES_MATERIAL == $request->id) {
+            DB::statement('exec sp_eliminar_tintas_cotizador ?', [$request->id_cotizaciones]);
+        }
+
         DB::statement('exec sp_eliminar_material_cotizador ?', [$request->id]);
     }
 
@@ -1553,6 +894,18 @@ class CotizadorController extends Controller
         ]);
     }
 
+    public function actualizarMedidasTinta(Request $request)
+    {
+        // return $request;
+        DB::statement('exec sp_update_cotizacion__tinta_tmp ?,?,?,?,?', [
+            $request->id_cotizaciones,
+            $request->blanco,
+            $request->precio_imp,
+            $request->importe_tinta,
+            $request->importe_mo,
+        ]);
+    }
+
     public function imprimirCotizacionGrid($id, Request $request)
     {
 
@@ -1610,5 +963,119 @@ class CotizadorController extends Controller
 
         $cotizacion_acabados = DB::table('v_cotizaciones_acabados')->where('ID_COTIZACIONES', $id)->orderBy('ID_COTIZACIONES_ACABADOS', 'ASC')->get();
         return $cotizacion_acabados;
+    }
+
+    private function calcularMaterial($cant_gral, $tancho_gral, $talto_gral, $material_ancho, $material_alto, $material_tipo, $material_importe, $tipo_resultado)
+    {
+
+        if ($material_tipo === "R") {
+            //Calcular a lo ancho/ancho...
+            $resAncho = ($material_ancho / $tancho_gral);
+            $resAlto = ($material_alto / $talto_gral);
+
+            //Calcular a lo alto/alto...
+            $resAncho2 = ($material_ancho / $talto_gral);
+            $resAlto2 = ($material_alto / $tancho_gral);
+
+            //Calcular cuantas piezas entran a lo ancho y a lo alto...
+            $orientacionAncho = (int)($resAncho) * (int)($resAlto);
+            $orientacionAlto = (int)($resAncho2) * (int)($resAlto2);
+
+            if ($orientacionAncho > $orientacionAlto) {
+                $entran = $orientacionAncho;
+                $textoEntran = "A lo ancho";
+            } else if ($orientacionAncho < $orientacionAlto) {
+                $entran = $orientacionAlto;
+                $textoEntran = "A lo alto";
+            } else if ($orientacionAncho == $orientacionAlto) {
+                $entran = $orientacionAlto;
+                $textoEntran = "A lo alto";
+            }
+            //Obtener el porcentaje de Aprovechamiento...
+            $aprovech = (($tancho_gral * $talto_gral * $entran) / ($material_ancho * $material_alto)) * 100;
+            $porcentaje = $aprovech;
+            $titCantMate = 'Pzas.';
+
+            $entran == 0 ? $cantidad2 = 0 : $cantidad2 = ($cant_gral / $entran);
+            $rescantidad = $cantidad2;
+
+            $anchom = $material_ancho / 100;
+            $altom = $material_alto / 100;
+
+            $valor = $anchom * $altom * $rescantidad * $material_importe * 1.1;
+            $resimporte = $valor;
+
+            // return $entran;
+        } else if ($material_tipo === "F" || $material_tipo === "P") {
+
+            $entranAncho = (int)($material_ancho / $tancho_gral); // 1
+            $entranAlto = (int)($material_ancho / $talto_gral); // 0
+
+            $entranAncho == 0 ? $a_lo_ancho = ceil($cant_gral / 1) * $tancho_gral : $a_lo_ancho = ceil($cant_gral / (int)($material_ancho / $tancho_gral)) * $talto_gral;
+            $entranAlto == 0 ? $a_lo_alto = $a_lo_ancho = ceil($cant_gral / 1) * $talto_gral : $a_lo_alto = ceil($cant_gral / (int)($material_ancho / $talto_gral)) * $tancho_gral;
+
+            //Obtiene la cantidad menor de material...
+            if ($a_lo_ancho < $a_lo_alto) {
+                $aprovech = (($talto_gral * $tancho_gral * $cant_gral) / ($material_ancho * $a_lo_ancho)) * 100;
+                $porcentaje = $aprovech;
+                $entran = floor($entranAncho);
+                $textoEntran = 'A lo ancho';
+
+                $anchoMat = $material_ancho / 100;
+                $aloancho = $a_lo_ancho / 100;
+                $cantidad1 = $anchoMat * $aloancho;
+            } else if ($a_lo_ancho > $a_lo_alto) {
+                $aprovech = (($talto_gral * $tancho_gral * $cant_gral) / ($material_ancho * $a_lo_alto)) * 100;
+                $porcentaje = $aprovech;
+                $entran = floor($entranAlto);
+                $textoEntran = 'A lo alto';
+
+
+                $anchoMat = $material_ancho / 100;
+                $aloalto = $a_lo_alto / 100;
+                $cantidad1 = $anchoMat * $aloalto;
+            } else if ($a_lo_ancho == $a_lo_alto) {
+                $aprovech = (($talto_gral * $tancho_gral * $cant_gral) / ($material_ancho * $a_lo_alto)) * 100;
+                $porcentaje = $aprovech;
+                $entran = floor($entranAncho);
+                $textoEntran = 'A lo ancho';
+
+                $anchoMat = $material_ancho / 100;
+                $aloalto = $a_lo_alto / 100;
+                $cantidad1 = $anchoMat * $aloalto;
+            } else {
+                //no hay otra condicion...
+            }
+
+            $cantidad2 = $cantidad1 / $anchoMat;
+
+            $titCantMate = 'm.';
+            $rescantidad = $cantidad2;
+
+            $valor = $material_importe * $cantidad2;
+            $valor = ($valor * $material_ancho / 100) * 1.1;
+            $resimporte = $valor;
+        }
+
+        switch ($tipo_resultado) {
+            case 'entran':
+                return $entran;
+                break;
+            case 'textoentran':
+                return $textoEntran;
+                break;
+            case 'aprovechamiento':
+                return $porcentaje;
+                break;
+            case 'resimporte':
+                return $resimporte;
+                break;
+            case 'rescantidad':
+                return $rescantidad;
+                break;
+            default:
+                return $titCantMate;
+                break;
+        }
     }
 }

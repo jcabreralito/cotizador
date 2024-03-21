@@ -784,12 +784,26 @@ function cambiarMedidas() {
                     // let valor = tblAddMaterialLoad(element.ID_MATERIAL, cantidad, tancho, talto);
                     // console.log(valor);
                     actualizarMedidasMaterial(valor.mat_cotId_r, valor.entranH_r, valor.importeH_r, valor.aprovechamientoH_r, valor.orientacionH_r, valor.cantidadH_r, valor.titCantMat_r);
+                    cargarDetalleMaterial($('#idCotizaciones').val());
+
+
+
+                    let nombre_tinta = $('#nombreTintaH').val();
+                    let precio_tinta = $('#precioTintaH').val();
+                    let precio_mo_flexible = $('#precioMOFlexibleH').val();
+                    let precio_mo_rigido = $('#precioMORigidoH').val();
+                    let id_tinta = $('#idTintaH').val();
+                    let blanco = $('#Blanco')[0].checked;
+
+                    let valor_tintas = calcular_tintas(nombre_tinta, precio_tinta, precio_mo_flexible, precio_mo_rigido, id_tinta, blanco, datos[0].SOLVENTE, datos[0].T, datos[0].TRASLUCIDO);
+                    actualizarMedidasTinta($('#idCotizaciones').val(), valor_tintas.blanco, valor_tintas.valorTinta, valor_tintas.importeTinta, valor_tintas.importeMO);
+                    // editar_tinta = 1;
+                    // guardarAddTintas();
+                    cargarDetalleTintas($('#idCotizaciones').val());
                     calcularTotales();
                     // valores.push(valor);
                 });
 
-                // cargarDetalleMaterial($('#idCotizaciones').val());
-                // tblMaterial.ajax.reload();
                 // console.log(valores);
             },
         })
@@ -1939,6 +1953,55 @@ function calculoTintas(nombre_tinta, precio_tinta, precio_mo_flexible, precio_mo
     })
 }
 
+function calcular_tintas(nombre_tinta, precio_tinta, precio_mo_flexible, precio_mo_rigido, id_tinta, blanco, solvente, tipo, traslucido) {
+
+    let solvente_t = solvente;
+    let total_ancho = parseFloat($('#tancho').val()) / 100;
+    let total_alto = parseFloat($('#talto').val()) / 100;
+    let ancho = parseFloat($('#ancho').val()) / 100;
+    let alto = parseFloat($('#alto').val()) / 100;
+    let cantidad_cotizacion = parseFloat($('#cantidad').val());
+    let area_impresion = total_ancho * total_alto * cantidad_cotizacion;
+
+    if (precio_mo_flexible == precio_mo_rigido) {
+        valor_tinta = parseFloat(precio_tinta) + parseFloat(precio_mo_flexible);
+        precio_mo = parseFloat(precio_mo_rigido) * area_impresion;
+    } else {
+        if (tipo == 'R') {
+            valor_tinta = parseFloat(precio_tinta) + parseFloat(precio_mo_rigido);
+            precio_mo = parseFloat(precio_mo_rigido) * area_impresion;
+        } else {
+            valor_tinta = parseFloat(precio_tinta) + parseFloat(precio_mo_flexible);
+            precio_mo = parseFloat(precio_mo_flexible) * area_impresion;
+        }
+    }
+
+    if (traslucido == 0) {
+        valor_traslucido = 1;
+    } else {
+        valor_traslucido = 1.25;
+    }
+
+    if (blanco == true) {
+        calculo_blanco = (ancho * alto * cantidad_cotizacion) * 150;
+    } else {
+        calculo_blanco = 0;
+    }
+
+    valor = ((valor_tinta * valor_traslucido) * area_impresion);
+    precio_tinta = parseFloat(precio_tinta) * area_impresion;
+
+    response = {
+        blanco: calculo_blanco,
+        valorTinta: valor,
+        importeTinta: precio_tinta,
+        importeMO: precio_mo,
+        idTinta: id_tinta,
+    };
+
+    return response;
+}
+
 function calculoAcabados(descripcion, importe, unidad, id_acabado, ta) {
     let ID_COTIZACIONES = $('#idCotizaciones').val();
     let total_precio_acabado = document.getElementById('totalPreAcabadoH');
@@ -2234,7 +2297,7 @@ function tblAddMaterialLoad(id_material, cantidad, t_ancho, t_alto) {
                 t_ancho: t_ancho,
                 t_alto: t_alto,
             },
-            error: function(data){
+            error: function (data) {
                 Swal.fire('Las medidas no son correctas para este Material, favor de verificar');
             }
         },
@@ -3692,6 +3755,7 @@ function editarAddAdicional(id) {
 }
 
 function eliminarAddMaterial(id) {
+    let ID_COTIZACIONES = $('#idCotizaciones').val();
 
     Swal.fire({
         title: "Materiales",
@@ -3713,6 +3777,7 @@ function eliminarAddMaterial(id) {
                 dataType: 'JSON',
                 data: {
                     id: id,
+                    id_cotizaciones: ID_COTIZACIONES,
                 },
                 success: function (data) {
                     loaderOut();
@@ -3729,6 +3794,7 @@ function eliminarAddMaterial(id) {
                     });
                     tblMaterial.draw(false);
                     calcularTotales();
+                    cargarDetalleTintas();
                     tblFormacionLoad(idCotizaciones.value);
                     tblAddMaterialLoad(id_material.value, cantidad.value, tancho.value, talto.value);
                     tblAddTintaLoad(idCotizaciones.value);
@@ -3750,6 +3816,7 @@ function eliminarAddMaterial(id) {
                     });
                     tblMaterial.draw(false);
                     calcularTotales();
+                    cargarDetalleTintas();
                     tblFormacionLoad(idCotizaciones.value);
                     tblAddMaterialLoad(id_material_2.value, cantidad.value, tancho.value, talto.value);
                     tblAddTintaLoad(idCotizaciones.value);
@@ -3800,7 +3867,8 @@ function eliminarAddTinta(id) {
                     Msg.fire({
                         title: "¡Tinta Eliminada!",
                     });
-                    tblTintas.draw(false);
+                    cargarDetalleTintas();
+                    // tblTintas.draw(false);
                     calcularTotales();
                     btnsaveCotizacion.disabled = false;
                     btnImprimirCotizacion.disabled = true;
@@ -3818,7 +3886,7 @@ function eliminarAddTinta(id) {
                     Msg.fire({
                         title: "¡Tinta Eliminada!",
                     });
-                    tblTintas.draw(false);
+                    cargarDetalleTintas();
                     calcularTotales();
                     btnsaveCotizacion.disabled = false;
                     btnImprimirCotizacion.disabled = true;
@@ -4206,8 +4274,6 @@ function calcular_material(cant_gral, tancho_gral, talto_gral, material_ancho, m
     // console.log('cant ' + cant_gral + ' tancho ' + tancho_gral + ' talto ' + talto_gral + ' matancho ' + material_ancho + ' matalto ' + material_alto + ' tipo ' + material_tipo);
     if (material_ancho !== "0" && material_alto !== "0") {
 
-        console.log(material_tipo);
-
         if (material_tipo === "R") {
             //Calcular a lo ancho/ancho...
             resAncho = (material_ancho / tancho_gral);
@@ -4254,8 +4320,8 @@ function calcular_material(cant_gral, tancho_gral, talto_gral, material_ancho, m
             a_lo_ancho = Math.ceil(cant_gral / parseInt(material_ancho / tancho_gral)) * talto_gral;
             a_lo_alto = Math.ceil(cant_gral / parseInt(material_ancho / talto_gral)) * tancho_gral;
 
-            console.log('a lo alto ' + a_lo_alto);
-            console.log('a lo ancho ' + a_lo_ancho);
+            // console.log('a lo alto ' + a_lo_alto);
+            // console.log('a lo ancho ' + a_lo_ancho);
 
             //Obtiene la cantidad menor de material...
             if (a_lo_ancho < a_lo_alto) {
@@ -4344,6 +4410,20 @@ function actualizarMedidasMaterial(mat_cotId_r, entranH_r, importeH_r, aprovecha
             orientacionH_r: orientacionH_r,
             cantidadH_r: cantidadH_r,
             titCantMat_r: titCantMat_r,
+        },
+    });
+}
+
+function actualizarMedidasTinta(id_cotizaciones, blanco, precio_imp, importe_tinta, importe_mo) {
+    $.ajax({
+        url: serve + 'actualizarMedidasTinta',
+        type: 'GET',
+        data: {
+            id_cotizaciones: id_cotizaciones,
+            blanco: blanco,
+            precio_imp: precio_imp,
+            importe_tinta: importe_tinta,
+            importe_mo: importe_mo,
         },
     });
 }

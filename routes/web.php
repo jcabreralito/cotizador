@@ -99,6 +99,8 @@ Route::get('sinCambiosNuevaCotizacion', [CotizadorController::class, 'sinCambios
 
 Route::get('actualizarMedidasMaterial', [CotizadorController::class, 'actualizarMedidasMaterial'])->name('actualizarMedidasMaterial');
 
+Route::get('actualizarMedidasTinta', [CotizadorController::class, 'actualizarMedidasTinta'])->name('actualizarMedidasTinta');
+
 Route::get('pdf/imprimirCotizacionGrid/{id}', [CotizadorController::class, 'imprimirCotizacionGrid']);
 
 Route::get('pdf/imprimirCotizacionOP/{id}', [CotizadorController::class, 'imprimirCotizacionOP']);
