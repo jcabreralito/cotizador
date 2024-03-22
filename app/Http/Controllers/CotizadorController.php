@@ -438,6 +438,12 @@ class CotizadorController extends Controller
         return $tinta;
     }
 
+    public function obtenerTintaCotizacion(Request $request)
+    {
+        $tinta = DB::table('v_cotizaciones_tintas_material_tmp')->where('ID_COTIZACIONES', $request->id_cotizaciones)->get();
+        return $tinta;
+    }
+
     public function obtenerAcabado(Request $request)
     {
         $acabado = DB::table('v_cotizaciones_acabados')->where('ID_COTIZACIONES_ACABADOS', $request->id_acabado)->get();
@@ -981,6 +987,7 @@ class CotizadorController extends Controller
             $orientacionAncho = (int)($resAncho) * (int)($resAlto);
             $orientacionAlto = (int)($resAncho2) * (int)($resAlto2);
 
+
             if ($orientacionAncho > $orientacionAlto) {
                 $entran = $orientacionAncho;
                 $textoEntran = "A lo ancho";
@@ -991,19 +998,21 @@ class CotizadorController extends Controller
                 $entran = $orientacionAlto;
                 $textoEntran = "A lo alto";
             }
+
             //Obtener el porcentaje de Aprovechamiento...
             $aprovech = (($tancho_gral * $talto_gral * $entran) / ($material_ancho * $material_alto)) * 100;
             $porcentaje = $aprovech;
             $titCantMate = 'Pzas.';
 
             $entran == 0 ? $cantidad2 = 0 : $cantidad2 = ($cant_gral / $entran);
-            $rescantidad = $cantidad2;
+            $rescantidad = ceil($cantidad2);
 
             $anchom = $material_ancho / 100;
             $altom = $material_alto / 100;
 
             $valor = $anchom * $altom * $rescantidad * $material_importe * 1.1;
             $resimporte = $valor;
+            // dd($valor);
 
             // return $entran;
         } else if ($material_tipo === "F" || $material_tipo === "P") {
@@ -1015,7 +1024,7 @@ class CotizadorController extends Controller
             $entranAlto == 0 ? $a_lo_alto = $a_lo_ancho = ceil($cant_gral / 1) * $talto_gral : $a_lo_alto = ceil($cant_gral / (int)($material_ancho / $talto_gral)) * $tancho_gral;
 
             //Obtiene la cantidad menor de material...
-            if ($a_lo_ancho < $a_lo_alto) {
+            if ((float)$a_lo_ancho < (float)$a_lo_alto) {
                 $aprovech = (($talto_gral * $tancho_gral * $cant_gral) / ($material_ancho * $a_lo_ancho)) * 100;
                 $porcentaje = $aprovech;
                 $entran = floor($entranAncho);
@@ -1024,7 +1033,8 @@ class CotizadorController extends Controller
                 $anchoMat = $material_ancho / 100;
                 $aloancho = $a_lo_ancho / 100;
                 $cantidad1 = $anchoMat * $aloancho;
-            } else if ($a_lo_ancho > $a_lo_alto) {
+
+            } else if ((float)$a_lo_ancho > (float)$a_lo_alto) {
                 $aprovech = (($talto_gral * $tancho_gral * $cant_gral) / ($material_ancho * $a_lo_alto)) * 100;
                 $porcentaje = $aprovech;
                 $entran = floor($entranAlto);
@@ -1034,7 +1044,7 @@ class CotizadorController extends Controller
                 $anchoMat = $material_ancho / 100;
                 $aloalto = $a_lo_alto / 100;
                 $cantidad1 = $anchoMat * $aloalto;
-            } else if ($a_lo_ancho == $a_lo_alto) {
+            } else if ((float)$a_lo_ancho == (float)$a_lo_alto) {
                 $aprovech = (($talto_gral * $tancho_gral * $cant_gral) / ($material_ancho * $a_lo_alto)) * 100;
                 $porcentaje = $aprovech;
                 $entran = floor($entranAncho);
@@ -1047,7 +1057,7 @@ class CotizadorController extends Controller
                 //no hay otra condicion...
             }
 
-            $cantidad2 = $cantidad1 / $anchoMat;
+            $cantidad2 = (float)number_format($cantidad1 / $anchoMat, 2);
 
             $titCantMate = 'm.';
             $rescantidad = $cantidad2;

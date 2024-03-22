@@ -39,6 +39,8 @@ Route::get('obtenerMaterial', [CotizadorController::class, 'obtenerMaterial'])->
 
 Route::get('obtenerTinta', [CotizadorController::class, 'obtenerTinta'])->name('obtenerTinta');
 
+Route::get('obtenerTintaCotizacion', [CotizadorController::class, 'obtenerTintaCotizacion'])->name('obtenerTintaCotizacion');
+
 Route::get('obtenerAcabado', [CotizadorController::class, 'obtenerAcabado'])->name('obtenerAcabado');
 
 Route::get('obtenerAdicional', [CotizadorController::class, 'obtenerAdicional'])->name('obtenerAdicional');
